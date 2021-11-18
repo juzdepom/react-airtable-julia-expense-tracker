@@ -13,22 +13,22 @@ function App() {
   //this method pulls in the data
   useEffect(() => {
    //pull in the table view data from airtable
-   base("entries")
+   base("nov")
      .select({ view: "Grid view" })
      .eachPage((records, fetchNextPage) => { 
        records.forEach((record) => { 
-        if(record.fields.Date === "2021-11-18"){ // check if the date is equal to today
+        if(record.fields.date === "2021-11-18"){ // check if the date is equal to today
           let entry = {}
-          entry.amount = record.fields.Amount
-          setTotal(total + entry.amount)
-          entry.category = record.fields.Category
-          entry.date = record.fields.Date
-          entry.location = record.fields.Location
-          entry.description = record.fields.Description
-          entry.dollars = Math.round(record.fields.Dollars * 100) / 100 //Math.round(num * 100) / 100
+          entry.amount = record.fields.amount
+          entry.category = record.fields.category
+          entry.date = record.fields.date
+          entry.location = record.fields.location
+          entry.description = record.fields.description
+          entry.dollars = Math.round(record.fields.dollars * 100) / 100 //Math.round(num * 100) / 100
           console.log(entry)
           todaysEntries.push(entry)
           console.log(`todayz entry length: ${todaysEntries.length}`)
+          // setTotal(total + entry.amount)
           setEntries(todaysEntries)
         }
        })
@@ -36,12 +36,33 @@ function App() {
      });
     //  console.log(`Total number of entries: ${allEntries.length}`)
   }, []);
-  
+
+  console.log(`ENTRIES LENGTH: ${entries.length}`)
+  // let everything = 0
+  // entries.forEach((entry) => {
+  //   everything = everything + entry.amount
+  //   // setTotal(total + entry.amount)
+  // });
+
+  // console.log(everything)
 
   return (
     <div className="App">
-      <p>Total number of entries: {entries.length} </p>
-      <p>Total = {total}</p>
+      {
+      entries.map((entry, index) => (
+        <div key={index}>
+          <span>{entry.amount} ({entry.dollars} USD) – </span>
+          <span>{entry.category}</span>
+          {/* TODO: add some conditional code so that if entry.location is empty, do not show this ↓ */}
+          <span><i> – 📍{entry.location}</i></span>
+          {/* TODO↑ */}
+          <br/>
+          <span><i>{entry.description}</i></span>
+          <br/>
+          <br/>
+        </div>
+      ))}
+      <p>Total Spent Today = {total} BAHT; {Math.round(total / 30 * 100) / 100} USD</p>
     </div>
   );
 }
